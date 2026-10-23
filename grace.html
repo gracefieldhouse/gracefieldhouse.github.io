@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grace — Coming soon</title>
+  <meta name="description" content="Grace — coming soon.">
+  <link rel="icon" href="icon.png">
+  <!-- Page autonome : le futur site Grace la remplacera sans toucher au reste -->
+  <style>
+    :root {
+      --bg: #050505;
+      --ink: #f5f5f5;
+      --muted: #8a8a8a;
+      --line: rgba(255, 255, 255, 0.12);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --font: "Inter", "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    ::selection { background: var(--ink); color: var(--bg); }
+
+    /* Étoiles (canvas) et lumière qui suit la souris */
+    #stars { position: fixed; inset: 0; width: 100%; height: 100%; opacity: 0; animation: fade 2.4s ease 0.2s forwards; }
+
+    .glow {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 900px;
+      height: 900px;
+      margin: -450px 0 0 -450px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(255, 255, 255, 0.075), transparent);
+      transform: translate3d(50vw, 50vh, 0);
+      pointer-events: none;
+      opacity: 0;
+      animation: fade 2s ease 1.2s forwards;
+    }
+
+    .stage {
+      position: relative;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .center { position: relative; display: grid; place-items: center; }
+
+    /* Anneaux : ils se dessinent, puis tournent lentement */
+    .rings {
+      position: absolute;
+      width: min(78vmin, 640px);
+      height: min(78vmin, 640px);
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .rings svg { width: 100%; height: 100%; overflow: visible; }
+    .rings circle { fill: none; stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+    .ring-1 { stroke-dasharray: 1600; stroke-dashoffset: 1600; animation: draw 2.2s var(--ease) 0.3s forwards; }
+    .ring-2 { stroke-dasharray: 4 10; opacity: 0; animation: fade 1.6s ease 1.4s forwards; }
+    .spin { transform-origin: 50% 50%; animation: spin 60s linear infinite; }
+    .spin-rev { transform-origin: 50% 50%; animation: spin 90s linear infinite reverse; }
+
+    /* Point lumineux qui fait le tour de l'anneau */
+    .orbit {
+      position: absolute;
+      inset: 0;
+      animation: spin 9s linear infinite;
+      opacity: 0;
+      animation: spin 9s linear infinite, fade 1s ease 2.2s forwards;
+    }
+    .orbit::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 6px;
+      height: 6px;
+      margin: -3px 0 0 -3px;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.6), 0 0 40px 10px rgba(255, 255, 255, 0.15);
+    }
+
+    /* Monogramme */
+    .mark {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: var(--ink);
+      color: var(--bg);
+      font-weight: 700;
+      font-size: 40px;
+      opacity: 0;
+      transform: scale(0.4) rotate(-20deg);
+      animation: pop 1s cubic-bezier(0.2, 0.9, 0.25, 1.25) 0.6s forwards;
+      box-shadow: 0 0 60px rgba(255, 255, 255, 0.12);
+    }
+
+    /* « GRACE » : chaque lettre sort de son masque, l'espacement se resserre */
+    .word {
+      margin: 30px 0 0;
+      display: flex;
+      justify-content: center;
+      font-size: clamp(56px, 13vw, 148px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.5em;
+      margin-right: -0.5em; /* compense l'espacement après la dernière lettre */
+      animation: tighten 2.4s var(--ease) 1s forwards;
+      direction: ltr;
+    }
+    .word span { display: inline-block; overflow: hidden; padding: 0.04em 0 0.08em; }
+    .word i {
+      display: inline-block;
+      font-style: normal;
+      transform: translateY(110%);
+      animation: rise 1.1s var(--ease) forwards;
+      background: linear-gradient(110deg, var(--ink) 42%, #ffffff 50%, var(--ink) 58%) 100% 0 / 260% 100% no-repeat;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .word span:nth-child(1) i { animation-delay: 1.05s; }
+    .word span:nth-child(2) i { animation-delay: 1.15s; }
+    .word span:nth-child(3) i { animation-delay: 1.25s; }
+    .word span:nth-child(4) i { animation-delay: 1.35s; }
+    .word span:nth-child(5) i { animation-delay: 1.45s; }
+    /* Reflet qui balaie le mot, puis revient de temps en temps */
+    .word.shine i { animation: sheen 1.6s ease-in-out forwards; }
+    .word.shine span:nth-child(2) i { animation-delay: 0.06s; }
+    .word.shine span:nth-child(3) i { animation-delay: 0.12s; }
+    .word.shine span:nth-child(4) i { animation-delay: 0.18s; }
+    .word.shine span:nth-child(5) i { animation-delay: 0.24s; }
+    .word.shine i { transform: none; }
+
+    /* Trait qui s'étire sous le mot */
+    .rule {
+      width: min(320px, 60vw);
+      height: 1px;
+      margin: 26px auto 0;
+      background: linear-gradient(90deg, transparent, var(--ink), transparent);
+      transform: scaleX(0);
+      animation: stretch 1.4s var(--ease) 2.1s forwards;
+    }
+
+    /* « COMING SOON » : les lettres s'allument une à une */
+    .soon {
+      margin: 26px 0 0;
+      font-size: clamp(13px, 2.2vw, 17px);
+      font-weight: 600;
+      letter-spacing: 0.6em;
+      margin-right: -0.6em;
+      text-transform: uppercase;
+      direction: ltr;
+    }
+    .soon b { font-weight: inherit; opacity: 0; display: inline-block; filter: blur(6px); animation: light 0.7s ease forwards; }
+
+    .sub {
+      margin: 18px 0 0;
+      font-size: 15px;
+      color: var(--muted);
+      opacity: 0;
+      transform: translateY(8px);
+      animation: in 1s var(--ease) 3.5s forwards;
+    }
+
+    /* Points qui pulsent */
+    .dots { display: flex; gap: 8px; justify-content: center; margin-top: 22px; opacity: 0; animation: in 1s var(--ease) 3.7s forwards; }
+    .dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--ink); animation: pulse 1.6s ease-in-out infinite; }
+    .dots i:nth-child(2) { animation-delay: 0.2s; }
+    .dots i:nth-child(3) { animation-delay: 0.4s; }
+
+    /* Retour */
+    .back {
+      position: fixed;
+      top: 22px;
+      left: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px 10px 12px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      opacity: 0;
+      transform: translateY(-8px);
+      animation: in 1s var(--ease) 3.9s forwards;
+      transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
+      z-index: 2;
+    }
+    .back:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.3); }
+    .back:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+    .back svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.35s var(--ease); }
+    .back:hover svg { transform: translateX(-3px); }
+    [dir="rtl"] .back { left: auto; right: 24px; padding: 10px 12px 10px 16px; }
+    [dir="rtl"] .back svg { transform: scaleX(-1); }
+    [dir="rtl"] .back:hover svg { transform: scaleX(-1) translateX(-3px); }
+
+    .foot {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      opacity: 0;
+      animation: fade 1.2s ease 4.2s forwards;
+    }
+
+    /* Rideau d'entrée : un fondu depuis le noir total */
+    .curtain { position: fixed; inset: 0; background: #000; z-index: 5; pointer-events: none; animation: lift 1.2s ease 0.05s forwards; }
+
+    @keyframes lift { to { opacity: 0; visibility: hidden; } }
+    @keyframes fade { to { opacity: 1; } }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pop { to { opacity: 1; transform: none; } }
+    @keyframes rise { to { transform: none; } }
+    @keyframes tighten { to { letter-spacing: 0.06em; margin-right: -0.06em; } }
+    @keyframes stretch { to { transform: scaleX(1); } }
+    @keyframes light { to { opacity: 1; filter: none; } }
+    @keyframes in { to { opacity: 1; transform: none; } }
+    @keyframes pulse { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1); } }
+    @keyframes sheen { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+
+    @media (max-width: 520px) {
+      .back { top: 14px; left: 14px; }
+      [dir="rtl"] .back { right: 14px; }
+      .mark { width: 60px; height: 60px; font-size: 32px; border-radius: 16px; }
+    }
+
+    /* Animations réduites : tout est affiché d'emblée */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before { animation: none !important; transition: none !important; }
+      .curtain { display: none; }
+      #stars, .glow, .orbit, .ring-2, .mark, .sub, .dots, .back, .foot, .soon b { opacity: 1 !important; transform: none !important; filter: none !important; }
+      .ring-1 { stroke-dashoffset: 0; }
+      .word { letter-spacing: 0.06em; margin-right: -0.06em; }
+      .word i { transform: none; }
+      .rule { transform: none; }
+    }
+  </style>
+  <script>
+    // Langue choisie sur le site (même réglage que les autres pages)
+    (function () {
+      var lang = 'fr';
+      try { lang = localStorage.getItem('gfh-site-lang') || 'fr'; } catch (e) {}
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    })();
+  </script>
+</head>
+<body>
+  <div class="curtain" aria-hidden="true"></div>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="glow" aria-hidden="true"></div>
+
+  <a class="back" href="index.html">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    <span id="back-text">Grace Field House</span>
+  </a>
+
+  <main class="stage">
+    <div class="center">
+      <div class="rings" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <g class="spin"><circle class="ring-1" cx="100" cy="100" r="99" pathLength="1600"/></g>
+          <g class="spin-rev"><circle class="ring-2" cx="100" cy="100" r="86"/></g>
+        </svg>
+        <div class="orbit"></div>
+      </div>
+
+      <div class="mark" aria-hidden="true">G</div>
+      <h1 class="word" aria-label="Grace"><span><i>G</i></span><span><i>R</i></span><span><i>A</i></span><span><i>C</i></span><span><i>E</i></span></h1>
+      <div class="rule" aria-hidden="true"></div>
+      <p class="soon" aria-label="Coming soon" id="soon">Coming soon</p>
+      <p class="sub" id="sub">Un nouveau site arrive bientôt.</p>
+      <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+  </main>
+
+  <p class="foot">GRACE</p>
+
+  <script>
+    (function () {
+      var TEXT = {
+        fr: { sub: 'Un nouveau site arrive bientôt.', back: 'Grace Field House' },
+        en: { sub: 'A new website is on its way.', back: 'Grace Field House' },
+        ja: { sub: '新しいサイトをまもなく公開します。', back: 'Grace Field House' },
+        zh: { sub: '全新网站即将上线。', back: 'Grace Field House' },
+        ar: { sub: 'موقع جديد قادم قريبًا.', back: 'Grace Field House' },
+      };
+      var lang = document.documentElement.lang;
+      var t = TEXT[lang] || TEXT.fr;
+      document.getElementById('sub').textContent = t.sub;
+      document.getElementById('back-text').textContent = t.back;
+
+      var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // « COMING SOON » : une lettre après l'autre
+      var soon = document.getElementById('soon');
+      var letters = soon.textContent;
+      soon.textContent = '';
+      for (var i = 0; i < letters.length; i++) {
+        var b = document.createElement('b');
+        b.textContent = letters[i] === ' ' ? ' ' : letters[i];
+        b.setAttribute('aria-hidden', 'true');
+        b.style.animationDelay = (2.5 + i * 0.06) + 's';
+        soon.appendChild(b);
+      }
+
+      if (reduced) return;
+
+      // Reflet sur « GRACE » : une fois l'entrée finie, puis toutes les 6 secondes
+      var word = document.querySelector('.word');
+      function shine() {
+        word.classList.remove('shine');
+        void word.offsetWidth; // relance l'animation
+        word.classList.add('shine');
+      }
+      setTimeout(function () { shine(); setInterval(shine, 6000); }, 3300);
+
+      // Lumière qui suit la souris (déplacement seulement, calculé par la carte graphique)
+      var glow = document.querySelector('.glow');
+      var gx = innerWidth / 2, gy = innerHeight / 2, tx = gx, ty = gy, moving = false;
+      function follow() {
+        gx += (tx - gx) * 0.08;
+        gy += (ty - gy) * 0.08;
+        glow.style.transform = 'translate3d(' + gx.toFixed(1) + 'px,' + gy.toFixed(1) + 'px,0)';
+        if (Math.abs(tx - gx) > 0.5 || Math.abs(ty - gy) > 0.5) requestAnimationFrame(follow);
+        else moving = false;
+      }
+      addEventListener('pointermove', function (e) {
+        tx = e.clientX; ty = e.clientY;
+        if (!moving) { moving = true; requestAnimationFrame(follow); }
+      }, { passive: true });
+
+      // Ciel étoilé : peu d'étoiles, qui dérivent et scintillent ; pause quand l'onglet est caché
+      var canvas = document.getElementById('stars');
+      var ctx = canvas.getContext('2d');
+      var stars = [], w = 0, h = 0, dpr = Math.min(devicePixelRatio || 1, 2), last = 0;
+      function size() {
+        w = innerWidth; h = innerHeight;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        var count = Math.round(Math.min(110, (w * h) / 14000));
+        stars = [];
+        for (var i = 0; i < count; i++) {
+          stars.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.2 + 0.2, s: Math.random() * 0.15 + 0.03, p: Math.random() * Math.PI * 2 });
+        }
+      }
+      function draw(now) {
+        if (document.hidden) { last = now; requestAnimationFrame(draw); return; }
+        var dt = Math.min((now - last) / 16.7, 3);
+        last = now;
+        ctx.clearRect(0, 0, w, h);
+        for (var i = 0; i < stars.length; i++) {
+          var s = stars[i];
+          s.y -= s.s * dt;
+          s.p += 0.02 * dt;
+          if (s.y < -2) { s.y = h + 2; s.x = Math.random() * w; }
+          ctx.globalAlpha = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(s.p));
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, 6.283);
+          ctx.fillStyle = '#fff';
+          ctx.fill();
+        }
+        requestAnimationFrame(draw);
+      }
+      size();
+      addEventListener('resize', size);
+      requestAnimationFrame(function (n) { last = n; draw(n); });
+    })();
+  </script>
+</body>
+</html>

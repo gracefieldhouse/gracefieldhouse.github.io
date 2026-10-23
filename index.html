@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grace Field House — Télécharger pour Windows</title>
+  <meta name="description" content="Crée tes QCM, révise au bon moment, passe des examens. Gratuit, sans compte, tout reste sur ton ordinateur. Pour Windows 10 et 11.">
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // Avant l'affichage : langue déjà choisie (pas de saut de mise en page) ou choix à faire
+    (function () {
+      var lang = null;
+      try { lang = localStorage.getItem('gfh-site-lang'); } catch (e) {}
+      var root = document.documentElement;
+      if (['fr', 'en', 'ja', 'zh', 'ar'].indexOf(lang) === -1) root.classList.add('choosing');
+      else { root.lang = lang; root.dir = lang === 'ar' ? 'rtl' : 'ltr'; }
+    })();
+  </script>
+</head>
+<body>
+  <div class="picker" id="picker" role="dialog" aria-modal="true" aria-labelledby="picker-title">
+    <div class="picker-box">
+      <img src="icon.png" alt="" width="64" height="64">
+      <h2 id="picker-title">Choisis ta langue<span>Choose your language</span></h2>
+      <div class="picker-list">
+        <button type="button" data-lang="fr"><b>Français</b><small>French</small></button>
+        <button type="button" data-lang="en"><b>English</b><small>Anglais</small></button>
+        <button type="button" data-lang="ja"><b lang="ja">日本語</b><small>Japonais</small></button>
+        <button type="button" data-lang="zh"><b lang="zh">中文</b><small>Chinois</small></button>
+        <button type="button" data-lang="ar"><b lang="ar" dir="rtl">العربية</b><small>Arabe</small></button>
+      </div>
+    </div>
+  </div>
+
+  <header class="top">
+    <a class="brand" href="#">
+      <img src="icon.png" alt="" width="28" height="28">
+      <span>Grace Field House</span>
+    </a>
+    <nav>
+      <a href="#apercu" data-i18n="nav.shots">Aperçu</a>
+      <a href="#fonctions" data-i18n="nav.features">Fonctions</a>
+      <a href="#installer" data-i18n="nav.install">Installation</a>
+      <a href="#questions" data-i18n="nav.faq">Questions</a>
+      <button type="button" class="lang-btn" id="lang-btn" data-i18n-title="lang.change" title="Changer de langue">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+        <span id="lang-current">FR</span>
+      </button>
+      <a class="btn btn-small" data-download="setup" href="https://github.com/fslmpo/gracefieldhouse/releases/latest/download/GraceFieldHouse-Setup.exe" data-i18n="download">Télécharger</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <img class="hero-icon" src="icon.png" alt="" width="96" height="96">
+      <h1><a class="grace-link" href="grace.html" data-i18n-title="grace.hint" title="Découvrir le projet Grace"><span class="grace-info" aria-hidden="true">i</span>Grace</a> Field House</h1>
+      <p class="lead" data-i18n-html="lead">Crée tes QCM, révise au bon moment, passe des examens.<br>Gratuit, sans compte, tout reste sur ton ordinateur.</p>
+
+      <p class="warn-os" data-i18n-html="warn">Cette application fonctionne uniquement sur <strong>Windows 10 et 11</strong>. Ouvre cette page depuis un PC pour l’installer.</p>
+
+      <div class="cta">
+        <a class="btn btn-primary" data-download="setup" href="https://github.com/fslmpo/gracefieldhouse/releases/latest/download/GraceFieldHouse-Setup.exe" download>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg>
+          <span data-i18n="cta.main">Télécharger pour Windows</span>
+        </a>
+        <a class="btn btn-ghost" data-download="portable" href="https://github.com/fslmpo/gracefieldhouse/releases/latest/download/GraceFieldHouse-Portable.exe" download data-i18n="cta.portable">Version portable</a>
+      </div>
+      <p class="meta">
+        <span data-i18n="meta.version">Version</span> <span data-version>1.43.0</span> · <span data-date>21 octobre 2026</span> · <span data-size="setup">107 Mo</span> · <span data-i18n="meta.os">Windows 10 et 11</span> · <span data-i18n="meta.free">Gratuit</span>
+      </p>
+    </section>
+
+    <section id="apercu" class="section shots">
+      <h2 id="shots-title" data-i18n="shots.title">Aperçu</h2>
+      <div class="shot-tabs" role="tablist" aria-labelledby="shots-title">
+        <button type="button" role="tab" class="shot-tab" data-shot="0" aria-selected="true" data-i18n="shots.1">Mes QCM</button>
+        <button type="button" role="tab" class="shot-tab" data-shot="1" aria-selected="false" data-i18n="shots.2">Répondre</button>
+        <button type="button" role="tab" class="shot-tab" data-shot="2" aria-selected="false" data-i18n="shots.3">Réviser</button>
+        <button type="button" role="tab" class="shot-tab" data-shot="3" aria-selected="false" data-i18n="shots.4">Examen</button>
+      </div>
+      <figure class="shot-frame">
+        <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>Grace Field House</span></div>
+        <button type="button" class="shot-view" id="shot-view" data-i18n-title="shots.zoom" title="Agrandir">
+          <img class="shot is-active" src="captures/mes-qcm.webp" width="1280" height="900" alt="" data-i18n-alt="shots.1n">
+          <img class="shot" src="captures/question.webp" width="1280" height="900" alt="" loading="lazy" data-i18n-alt="shots.2n">
+          <img class="shot" src="captures/revisions.webp" width="1280" height="900" alt="" loading="lazy" data-i18n-alt="shots.3n">
+          <img class="shot" src="captures/examen.webp" width="1280" height="900" alt="" loading="lazy" data-i18n-alt="shots.4n">
+        </button>
+        <div class="shot-progress" aria-hidden="true"><div></div></div>
+      </figure>
+      <p class="shot-caption" id="shot-caption" aria-live="polite" data-i18n="shots.1n">Tous tes QCM, rangés par catégories, avec recherche et filtres.</p>
+      <p class="shot-note" data-i18n="shots.note">Captures de la version anglaise de l’application ; les QCM fournis sont en français.</p>
+    </section>
+
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" hidden>
+      <button type="button" class="lightbox-close" id="lightbox-close" data-i18n-title="shots.close" title="Fermer">✕</button>
+      <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <section id="fonctions" class="section">
+      <h2 data-i18n="can.title">Ce que tu peux faire</h2>
+      <div class="grid">
+        <article class="card"><h3 data-i18n="can.1">Créer tes propres QCM</h3><p data-i18n="can.1n">Douze types de questions : connaissances, logique, calcul, mémoire.</p></article>
+        <article class="card"><h3 data-i18n="can.2">Réviser au bon moment</h3><p data-i18n="can.2n">Les questions reviennent avant que tu les oublies.</p></article>
+        <article class="card"><h3 data-i18n="can.3">Passer des examens</h3><p data-i18n="can.3n">Chronométrés, notés sur 20, corrigés à la fin.</p></article>
+        <article class="card"><h3 data-i18n="can.4">Jouer à plusieurs</h3><p data-i18n="can.4n">Sur le même Wi-Fi, téléphones compris.</p></article>
+        <article class="card"><h3 data-i18n="can.5">Envoyer un QCM à un ami</h3><p data-i18n="can.5n">Un code à coller dans un message suffit.</p></article>
+        <article class="card"><h3 data-i18n="can.6">Imprimer ou exporter en PDF</h3><p data-i18n="can.6n">Fiches, sujets, corrigés, cartes à découper.</p></article>
+      </div>
+    </section>
+
+    <section id="installer" class="section">
+      <h2 data-i18n="install.title">Installer en trois étapes</h2>
+      <ol class="steps">
+        <li>
+          <span class="num">1</span>
+          <div><h3 data-i18n="step.1">Télécharge l’installateur</h3><p data-i18n-html="step.1n">Clique sur « Télécharger pour Windows ». Le fichier <code>GraceFieldHouse-Setup.exe</code> arrive dans tes Téléchargements.</p></div>
+        </li>
+        <li>
+          <span class="num">2</span>
+          <div><h3 data-i18n="step.2">Lance-le</h3><p data-i18n="step.2n">Double-clique sur le fichier, accepte la licence et choisis le dossier d’installation. Pas besoin de compte.</p></div>
+        </li>
+        <li>
+          <span class="num">3</span>
+          <div><h3 data-i18n="step.3">Ouvre l’application</h3><p data-i18n="step.3n">Un raccourci « Grace Field House » apparaît sur ton Bureau. C’est prêt.</p></div>
+        </li>
+      </ol>
+      <p class="note" data-i18n-html="note">Si Windows affiche « Windows a protégé votre ordinateur », clique sur <strong>Informations complémentaires</strong>, puis sur <strong>Exécuter quand même</strong>. Cet avertissement apparaît pour les applications peu connues.</p>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2 data-i18n="know.title">Bon à savoir</h2>
+        <ul class="list">
+          <li data-i18n-html="know.1"><strong>Windows uniquement.</strong> Pas de version Mac ni téléphone.</li>
+          <li data-i18n-html="know.2"><strong>Jeu à plusieurs en local.</strong> Tout le monde doit être sur le même réseau.</li>
+          <li data-i18n-html="know.3"><strong>Pas de synchronisation.</strong> Ni compte ni serveur : tes données restent chez toi.</li>
+          <li data-i18n-html="know.4"><strong>Tu écris tes questions.</strong> Ou tu les colles depuis un texte, sans IA.</li>
+          <li data-i18n-html="know.5"><strong>Cinq langues d’interface.</strong> Les QCM fournis sont en français.</li>
+        </ul>
+      </div>
+      <div id="questions">
+        <h2 data-i18n="faq.title">Questions</h2>
+        <details><summary data-i18n="faq.1q">Installateur ou version portable ?</summary><p data-i18n="faq.1a">L’installateur est recommandé : l’application démarre plus vite et se désinstalle proprement. La version portable se lance sans installation, depuis une clé USB par exemple, mais elle met plus de temps à s’ouvrir.</p></details>
+        <details><summary data-i18n="faq.2q">C’est vraiment gratuit ?</summary><p data-i18n="faq.2a">Oui. Pas de publicité, pas d’abonnement, pas de compte.</p></details>
+        <details><summary data-i18n="faq.3q">Où sont enregistrées mes données ?</summary><p data-i18n="faq.3a">Sur ton ordinateur uniquement. Rien n’est envoyé sur Internet.</p></details>
+        <details><summary data-i18n="faq.4q">Comment la désinstaller ?</summary><p data-i18n="faq.4a">Paramètres Windows › Applications › Grace Field House › Désinstaller.</p></details>
+      </div>
+    </section>
+
+    <section class="final">
+      <h2 data-i18n="final.title">Prêt à commencer ?</h2>
+      <a class="btn btn-primary" data-download="setup" href="https://github.com/fslmpo/gracefieldhouse/releases/latest/download/GraceFieldHouse-Setup.exe" download data-i18n="final.btn">Télécharger Grace Field House</a>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Grace Field House <span data-version>1.43.0</span> · <span data-i18n="foot.fan">Projet de fan inspiré de The Promised Neverland, sans lien avec ses auteurs ni ses éditeurs.</span></p>
+    <p><span data-i18n="foot.copy">© 2026 Tim — Grace Field House. Tous droits réservés.</span> · <a href="droits-auteur.html" data-i18n="foot.rights">Droits d’auteur</a> · <a href="mentions-legales.html" data-i18n="foot.legal">Mentions légales</a></p>
+  </footer>
+
+  <script src="i18n.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

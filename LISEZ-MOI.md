@@ -53,3 +53,18 @@ Le mot « Grace » du titre mène à `grace.html`, une page d'attente animée po
 Grace. Elle est autonome (son style et son script sont à l'intérieur) : quand le site Grace
 existera, remplace simplement le lien `href="grace.html"` dans `index.html` par son adresse,
 et supprime `grace.html`.
+
+## Le site en ligne
+
+- Site : https://fslmpo.github.io/gracefieldhouse/
+- Dépôt : https://github.com/fslmpo/gracefieldhouse
+- Installateurs : dans les Releases du dépôt. Les boutons du site pointent vers
+  `releases/latest/download/…` : ils suivent toujours la dernière Release.
+
+**Modifier le site** : change les fichiers ici, puis dans un terminal ouvert dans ce dossier :
+`git add -A`, `git commit -m "ce qui a changé"`, `git push`. Le site se met à jour en une minute.
+
+**Publier une nouvelle version de l'application** : crée une Release sur GitHub (nouveau numéro,
+par exemple `v1.44.0`) et joins-y `GraceFieldHouse-Setup.exe` et `GraceFieldHouse-Portable.exe`,
+avec exactement ces noms. Pense à mettre à jour le numéro de version, la date et la taille au
+début de `script.js`.

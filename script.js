@@ -5,8 +5,8 @@
 const RELEASE = {
   version: '1.43.0',
   date: '2026-10-21',
-  setup: { url: 'https://github.com/fslmpo/gracefieldhouse/releases/latest/download/GraceFieldHouse-Setup.exe', sizeMb: 107 },
-  portable: { url: 'https://github.com/fslmpo/gracefieldhouse/releases/latest/download/GraceFieldHouse-Portable.exe', sizeMb: 107 },
+  setup: { url: 'https://github.com/gracefieldhouse/gracefieldhouse.github.io/releases/latest/download/GraceFieldHouse-Setup.exe', sizeMb: 107 },
+  portable: { url: 'https://github.com/gracefieldhouse/gracefieldhouse.github.io/releases/latest/download/GraceFieldHouse-Portable.exe', sizeMb: 107 },
 };
 
 const root = document.documentElement;

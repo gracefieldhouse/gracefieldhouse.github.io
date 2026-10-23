@@ -56,8 +56,8 @@ et supprime `grace.html`.
 
 ## Le site en ligne
 
-- Site : https://fslmpo.github.io/gracefieldhouse/
-- Dépôt : https://github.com/fslmpo/gracefieldhouse
+- Site : https://gracefieldhouse.github.io/
+- Dépôt : https://github.com/gracefieldhouse/gracefieldhouse.github.io
 - Installateurs : dans les Releases du dépôt. Les boutons du site pointent vers
   `releases/latest/download/…` : ils suivent toujours la dernière Release.
 
